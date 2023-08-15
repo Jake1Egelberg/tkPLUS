@@ -1,0 +1,23 @@
+Package: tkPLUS
+Type: Package
+Title: tkPLUS: A tcltk Wrapper Wrapper
+Version: 1.0.0
+Author: Jacob Egelberg
+Maintainer: Jacob Egelberg <jake1egelberg@gmail.com>
+Description: A wrapper for the base R Tcl/Tk wrapper tcltk.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 2.10),
+    tcltk,
+    tkrplot,
+    stringr,
+    this.path,
+    ggplot2
+Suggests: 
+    testthat (>= 3.0.0)
+Imports:
+    utils,
+    methods
+RoxygenNote: 7.2.3
