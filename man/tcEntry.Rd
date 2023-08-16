@@ -16,7 +16,7 @@ tcEntry(
   text,
   width,
   justify,
-  color,
+  fg,
   background,
   size,
   weight,
@@ -45,7 +45,7 @@ The name of your widget as a string.
 \item{justify}{
 (optional) A string specifying text justification in the entry. Can be "left", "right", or "center".
 }
-\item{color}{
+\item{fg}{
 (optional) A string specifying text color.
 }
 \item{background}{

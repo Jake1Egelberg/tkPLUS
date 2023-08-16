@@ -23,12 +23,12 @@ tcScrollbar(
   height,
   width,
   label,
-  color,
+  fg,
+  background,
   size,
   weight,
   family,
   orient,
-  background,
   troughcolor,
   binding
 )
@@ -75,8 +75,11 @@ The name of an R object as a string used to store the scroll value.
 \item{label}{
 (optional) A string to be displayed with the scrollbar. The label appears in the top left corner if the scale is horizontal, or the top right corner if vertical.
 }
-\item{color}{
+\item{fg}{
 (optional) A string specifying text color.
+}
+\item{background}{
+(optional) A string specifying background color.
 }
 \item{size}{
 (optional) An integer specifying text size.
@@ -89,9 +92,6 @@ The name of an R object as a string used to store the scroll value.
 }
 \item{orient}{
 (optional) The orientation of the scrollbar. Can be "horizontal" or "vertical".
-}
-\item{background}{
-(optional) A string specifying background color.
 }
 \item{troughcolor}{
 (optional) A string specifying trough color.
@@ -149,7 +149,7 @@ scroll<-tcScrollbar("frame1",
                     variable="5",
                     command="get_value",
                     height=250,
-                    color="red",
+                    fg="red",
                     weight="bold",
                     orient="horizontal",
                     showvalue=TRUE,

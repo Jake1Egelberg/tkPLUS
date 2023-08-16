@@ -9,7 +9,7 @@
 Use tcModify() to modify the displayed values of an existing widget.
 }
 \usage{
-tcModify(widget_name, widget_list, ...)
+tcModify(widget_name, widget_list, ..., pos)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +22,9 @@ The widget list containing the widget to modify.
 }
 \item{...}{,
 A new argument. For example: \code{text="new text"}.
+}
+\item{pos}{
+Do not change.
 }
 }
 \examples{

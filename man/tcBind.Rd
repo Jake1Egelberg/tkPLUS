@@ -47,7 +47,7 @@ widget_list[[3]]<-tcLabel("frame2",
                           tcGrid(1,1,pady=30),
                           "label",
                           text="Hover over me!",
-                          color="blue")
+                          fg="blue")
 
 tcBuild("app",
         widget_list,

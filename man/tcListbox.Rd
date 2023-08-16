@@ -17,7 +17,7 @@ tcListbox(
   height,
   width,
   selectmode,
-  color,
+  fg,
   background,
   size,
   weight,
@@ -50,7 +50,7 @@ A vector of options to be listed.
 \item{selectmode}{
 A string of "single" or "multiple" specifying if single or multiple selections should (optional) be allowed. Defaults to single.
 }
-\item{color}{
+\item{fg}{
 (optional) A string specifying text color.
 }
 \item{background}{

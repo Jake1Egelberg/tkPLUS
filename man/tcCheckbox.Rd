@@ -15,7 +15,7 @@ tcCheckbox(
   name,
   text,
   value,
-  color,
+  fg,
   background,
   size,
   weight,
@@ -41,7 +41,7 @@ The name of your widget as a string.
 \item{value}{
 (optional) A boolean of TRUE or FALSE. Defaults to FALSE.
 }
-\item{color}{
+\item{fg}{
 (optional) A string specifying text color.
 }
 \item{background}{

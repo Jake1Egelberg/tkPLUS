@@ -216,7 +216,6 @@
 
 }
 
-
 # ---------------------------PACKAGE FUNCTIONS
 
 #Set a theme
@@ -338,71 +337,136 @@ tcReplace<-function(old_widget_name,
 #' @export tcModify
 tcModify<-function(widget_name,
                    widget_list,
-                    ...){
+                    ...,
+                   pos=1){
 
   #Name of new argument is the argument to change, value is the new value
-  new_argument<-list(...)
-  .GlobalEnv$new_argument<-list(...)
+  raw_new_argument<-list(...)
+  .GlobalEnv$raw_new_argument<-list(...)
 
-  # Get index of the current widget
-  widget_ind<-which(lapply(widget_list,"[[",2)==widget_name)
+  #If the new argument has length>1 then cycle thru each one
+  for(i in seq_along(raw_new_argument)){
 
-  #Find the old value in the widget based on the position of the argument
-  old_value_position<-str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=",names(new_argument),"=)(.*?)(?=,|\\))",sep=""))[[1]]
+    .GlobalEnv$new_argument<-raw_new_argument[i]
 
-  #If the argument isnt in the widget text...
-  if(widget_list[[widget_ind]]$Class=="Listbox"&&names(new_argument)=="values"){
+    # Get index of the current widget
+    widget_ind<-which(lapply(widget_list,"[[",2)==widget_name)
 
-    #if you are changing the values of the listbox
-    widget_list[[widget_ind]]$Convert$VALUES<-new_argument[[1]]
+    #Find the old value in the widget based on the position of the argument
+    old_value_position<-str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=",names(new_argument),"=)(.*?)(?=,|\\))",sep=""))[[1]]
 
-  } else if(widget_list[[widget_ind]]$Class=="Combobox"&&names(new_argument)%in%c("values","selected")){
+    #If there are multiple positions, change both
+    # if(nrow(old_value_position)>1){
+    #   #Get one not preceded by alphanum character (likely preceded by , or ( instead)
+    #   good_pos<-max(str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<![:alnum:])",names(new_argument),"=",sep=""))[[1]])
+    #   diff_vec<-abs(old_value_position[,1]-good_pos)
+    #   old_value_position<-old_value_position[which(diff_vec==min(diff_vec)),]
+    # }
 
-    #if you are changing the values of the combobox
-    if(names(new_argument)=="values"){
-      widget_list[[widget_ind]]$Preserve$VALUES<-new_argument[[1]]
-    } else if(names(new_argument)=="selected"){
+    #If the argument isnt in the widget text...
+    if(widget_list[[widget_ind]]$Class=="Listbox"&&names(new_argument)=="values"){
+
+      #if you are changing the values of the listbox
       widget_list[[widget_ind]]$Convert$VALUES<-new_argument[[1]]
+
+    } else if(widget_list[[widget_ind]]$Class=="Listbox"&&names(new_argument)=="add_scrollbar"){
+
+      widget_list[[widget_ind]]$Other$Scrollbar<-new_argument[[1]]
+
+    } else if(widget_list[[widget_ind]]$Class=="Combobox"&&names(new_argument)%in%c("values","selected")){
+
+      #if you are changing the values of the combobox
+      if(names(new_argument)=="values"){
+        widget_list[[widget_ind]]$Preserve$VALUES<-new_argument[[1]]
+      } else if(names(new_argument)=="selected"){
+        widget_list[[widget_ind]]$Convert$VALUES<-new_argument[[1]]
+      }
+
+    } else if(widget_list[[widget_ind]]$Class=="Plot"&&names(new_argument)=="ggplot"){
+
+      old_value_position<-str_locate_all(widget_list[[widget_ind]]$Widget,"(?<=\\{plot\\()(.*?)(?=\\)\\})")[[1]]
+
+      #Replace the old value with the new value (by position not string match)
+      str_sub(widget_list[[widget_ind]]$Widget,start=old_value_position[[1]],end=old_value_position[[2]])<-new_argument[[1]]
+
+    } else if(widget_list[[widget_ind]]$Class=="Plot"&&names(new_argument)=="own_frame"){
+
+      widget_list[[widget_ind]]$Other$FRAME<-new_argument[[1]]
+
+    } else if(widget_list[[widget_ind]]$Class=="Entry"&&names(new_argument)=="text"){
+
+      widget_list[[widget_ind]]$Convert$TEXT<-new_argument[[1]]
+
+    } else if(widget_list[[widget_ind]]$Class=="Checkbutton"&&names(new_argument)=="value"){
+
+      widget_list[[widget_ind]]$Convert$VALUE<-new_argument[[1]]
+
+    } else if(widget_list[[widget_ind]]$Class%in%c("Checkbutton","Button")&&names(new_argument)=="background"){
+
+      new_value<-tryCatch(as.numeric(new_argument[[1]]),warning=function(w){return(paste("'",new_argument[[1]],"'",sep=""))})
+
+      pos1<-str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=","activebackground","=)(.*?)(?=,|\\))",sep=""))[[1]]
+
+      #Replace the old value with the new value (by position not string match)
+      str_sub(widget_list[[widget_ind]]$Widget,start=pos1[[1]],end=pos1[[2]])<-new_value
+
+      pos2<-str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=",",background","=)(.*?)(?=,|\\))",sep=""))[[1]]
+
+      #Replace the old value with the new value (by position not string match)
+      str_sub(widget_list[[widget_ind]]$Widget,start=pos2[[1]],end=pos2[[2]])<-new_value
+
+    } else if(widget_list[[widget_ind]]$Class%in%c("Checkbutton","Button")&&names(new_argument)=="fg"){
+
+      new_value<-tryCatch(as.numeric(new_argument[[1]]),warning=function(w){return(paste("'",new_argument[[1]],"'",sep=""))})
+
+      pos1<-str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=","activeforeground","=)(.*?)(?=,|\\))",sep=""))[[1]]
+
+      #Replace the old value with the new value (by position not string match)
+      str_sub(widget_list[[widget_ind]]$Widget,start=pos1[[1]],end=pos1[[2]])<-new_value
+
+      pos2<-str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=",",fg","=)(.*?)(?=,|\\))",sep=""))[[1]]
+
+      #Replace the old value with the new value (by position not string match)
+      str_sub(widget_list[[widget_ind]]$Widget,start=pos2[[1]],end=pos2[[2]])<-new_value
+
+    } else if(names(new_argument)=="binding"){
+
+      #Change binding
+      widget_list[[widget_ind]]$Binding<-new_argument[[1]]
+
+    } else if(names(new_argument)=="position"){
+
+      widget_list[[widget_ind]]$Position<-new_argument[[1]]
+
+    } else{
+
+      # Get the value to be replaced
+      raw_old_value<-str_sub(widget_list[[widget_ind]]$Widget,start=old_value_position[[1]],end=old_value_position[[2]])
+
+      #Curate the new value
+      if(names(new_argument)!="parent"){
+        new_value<-tryCatch(as.numeric(new_argument[[1]]),warning=function(w){return(paste("'",new_argument[[1]],"'",sep=""))})
+      } else{
+        new_value<-new_argument[[1]]
+      }
+
+      #Replace the old value with the new value (by position not string match)
+      str_sub(widget_list[[widget_ind]]$Widget,start=old_value_position[[1]],end=old_value_position[[2]])<-new_value
+
     }
 
-  } else if(widget_list[[widget_ind]]$Class=="Plot"&&names(new_argument)=="ggplot"){
+    #Save widget list to parent environment
+    assign("widget_list",
+           widget_list,
+           envir=as.environment(pos))
 
-    old_value_position<-str_locate_all(widget_list[[widget_ind]]$Widget,"(?<=\\{plot\\()(.*?)(?=\\)\\})")[[1]]
+    #Remove the old widget
+    tcDestroy(widget_name)
 
-    #Replace the old value with the new value (by position not string match)
-    str_sub(widget_list[[widget_ind]]$Widget,start=old_value_position[[1]],end=old_value_position[[2]])<-new_argument[[1]]
-
-  } else if(widget_list[[widget_ind]]$Class=="Entry"&&names(new_argument)=="text"){
-
-    widget_list[[widget_ind]]$Convert$TEXT<-new_argument[[1]]
-
-  } else if(widget_list[[widget_ind]]$Class=="Checkbutton"&&names(new_argument)=="value"){
-
-    widget_list[[widget_ind]]$Convert$VALUE<-new_argument[[1]]
-
-  }else{
-
-    # Get the value to be replaced
-    raw_old_value<-str_sub(widget_list[[widget_ind]]$Widget,start=old_value_position[[1]],end=old_value_position[[2]])
-
-    #Curate the new value
-    new_value<-tryCatch(as.numeric(new_argument[[1]]),warning=function(w){return(paste("'",new_argument[[1]],"'",sep=""))})
-
-    #Replace the old value with the new value (by position not string match)
-    str_sub(widget_list[[widget_ind]]$Widget,start=old_value_position[[1]],end=old_value_position[[2]])<-new_value
+    #Parse new widget
+    .parse_widgets(widget_ind,widget_list)
 
   }
-
-  #Save widget list to parent environment
-  assign("widget_list",
-         widget_list,
-         envir=parent.frame())
-
-  #Remove the old widget
-  tcDestroy(widget_name)
-
-  #Parse new widget
-  .parse_widgets(widget_ind,widget_list)
 
 }
 
@@ -658,7 +722,7 @@ tcLabel<-function(parent,
                   position,
                   name,
                   text,
-                  color=tcCurrentTheme$TextColor,
+                  fg=tcCurrentTheme$TextColor,
                   background=tcCurrentTheme$WidgetBackground,
                   size=tcCurrentTheme$TextSize,
                   weight="normal",
@@ -668,7 +732,7 @@ tcLabel<-function(parent,
   #Create text string for widget
   widget_text<-paste(.cur_name(name),"tklabel(parent=",parent,
                     ",text='",text,"'",
-                    ",fg='",color,"'",
+                    ",fg='",fg,"'",
                     ",background='",background,"'",
                     ",font=tkfont.create(size=",size,",family='",family,"',weight='",weight,"')",
                     ")",sep="")
@@ -689,7 +753,7 @@ tcButton<-function(parent,
                    name,
                    text,
                    command,
-                   color=tcCurrentTheme$TextColor,
+                   fg=tcCurrentTheme$TextColor,
                    background=tcCurrentTheme$WidgetBackground,
                    size=tcCurrentTheme$TextSize,
                    weight="normal",
@@ -699,10 +763,10 @@ tcButton<-function(parent,
   #Create text string for widget
   widget_text<-paste(.cur_name(name),"tkbutton(parent=",parent,
                      ",text='",text,"'",
-                     ",fg='",color,"'",
+                     ",fg='",fg,"'",
                      ",background='",background,"'",
                      ",activebackground='",background,"'",
-                     ",activeforeground='",color,"'",
+                     ",activeforeground='",fg,"'",
                      ",font=tkfont.create(size=",size,",family='",family,"',weight='",weight,"')",
                      ",command=",command,
                      ")",sep="")
@@ -723,7 +787,7 @@ tcCheckbox<-function(parent,
                      name,
                      text="",
                      value=FALSE,
-                     color=tcCurrentTheme$TextColor,
+                     fg=tcCurrentTheme$TextColor,
                      background=tcCurrentTheme$WidgetBackground,
                      size=tcCurrentTheme$TextSize,
                      weight="normal",
@@ -734,9 +798,9 @@ tcCheckbox<-function(parent,
   widget_text<-paste(.cur_name(name),"tkcheckbutton(parent=",parent,
                      ",text='",text,"'",
                      ",variable=VALUE",
-                     ",fg='",color,"'",
+                     ",fg='",fg,"'",
                      ",activebackground='",background,"'",
-                     ",activeforeground='",color,"'",
+                     ",activeforeground='",fg,"'",
                      ",background='",background,"'",
                      ",font=tkfont.create(size=",size,",family='",family,"',weight='",weight,"')",
                      ")",sep="")
@@ -760,7 +824,7 @@ tcListbox<-function(parent,
                     height=5,
                     width=10,
                     selectmode="single",
-                    color=tcCurrentTheme$TextColor,
+                    fg=tcCurrentTheme$TextColor,
                     background=tcCurrentTheme$WidgetBackground,
                     size=tcCurrentTheme$TextSize,
                     weight="normal",
@@ -774,7 +838,7 @@ tcListbox<-function(parent,
                      ",height=",height,
                      ",width=",width,
                      ",selectmode='",tolower(selectmode),"'",
-                     ",fg='",color,"'",
+                     ",fg='",fg,"'",
                      ",background='",background,"'",
                      ",font=tkfont.create(size=",size,",family='",family,"',weight='",weight,"')",
                      ",exportselection=FALSE",
@@ -800,7 +864,7 @@ tcEntry<-function(parent,
                   text="",
                   width=10,
                   justify="center",
-                  color=tcCurrentTheme$TextColor,
+                  fg=tcCurrentTheme$TextColor,
                   background="white",
                   size=tcCurrentTheme$TextSize,
                   weight="normal",
@@ -810,7 +874,7 @@ tcEntry<-function(parent,
   #Create text string for widget
   widget_text<-paste(.cur_name(name),"tkentry(parent=",parent,
                      ",textvariable=TEXT",
-                     ",fg='",color,"'",
+                     ",fg='",fg,"'",
                      ",background='",background,"'",
                      ",font=tkfont.create(size=",size,",family='",family,"',weight='",weight,"')",
                      ",justify='",justify,"'",
@@ -836,7 +900,7 @@ tcCombobox<-function(parent,
                      selected="",
                      width=10,
                      justify="center",
-                     color=tcCurrentTheme$TextColor,
+                     foreground=tcCurrentTheme$TextColor,
                      size=tcCurrentTheme$TextSize,
                      weight="normal",
                      family=tcCurrentTheme$TextFamily,
@@ -848,7 +912,7 @@ tcCombobox<-function(parent,
                      ",textvariable=SELECTED",
                      ",justify='",justify,"'",
                      ",width=",width,
-                     ",foreground='",color,"'",
+                     ",foreground='",foreground,"'",
                      ",font=tkfont.create(size=",size,",family='",family,"',weight='",weight,"')",
                      ")",sep="")
 
@@ -908,12 +972,12 @@ tcScrollbar<-function(parent,
                       height=100,
                       width=15,
                       label="",
-                      color=tcCurrentTheme$TextColor,
+                      fg=tcCurrentTheme$TextColor,
+                      background=tcCurrentTheme$WidgetBackground,
                       size=tcCurrentTheme$TextSize,
                       weight="normal",
                       family=tcCurrentTheme$TextFamily,
                       orient="vertical",
-                      background=tcCurrentTheme$WidgetBackground,
                       troughcolor="gray80",
                       binding=NULL){
 
@@ -925,9 +989,9 @@ tcScrollbar<-function(parent,
                      ",variable=VARIABLE",
                      ",command=",command,
                      ",orient='",orient,"'",
-                     ",fg='",color,"'",
+                     ",fg='",fg,"'",
                      ",font=tkfont.create(size=",size,",family='",family,"',weight='",weight,"')",
-                     ",bg='",background,"'",
+                     ",background='",background,"'",
                      ",highlightcolor='",background,"'",
                      ",highlightbackground='",background,"'",
                      ",activebackground='",background,"'",

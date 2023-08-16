@@ -15,7 +15,7 @@ tcButton(
   name,
   text,
   command,
-  color,
+  fg,
   background,
   size,
   weight,
@@ -41,7 +41,7 @@ A string of text to display within the button.
 \item{command}{
 The name of the function, as a string, to be called when the button is clicked.
 }
-\item{color}{
+\item{fg}{
 (optional) A string specifying text color.
 }
 \item{background}{

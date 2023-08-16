@@ -17,7 +17,7 @@ Use tcCombobox() to allow the user to select one value from a list of provided v
   selected,
   width,
   justify,
-  color,
+  foreground,
   size,
   weight,
   family,
@@ -48,7 +48,7 @@ A vector of options to be listed.
 \item{justify}{
 (optional) A string specifying text justification in the entry. Can be "left", "right", or "center".
 }
-\item{color}{
+\item{foreground}{
 (optional) A string specifying text color.
 }
 \item{size}{

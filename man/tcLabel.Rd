@@ -9,7 +9,7 @@
 Use tcLabel() to display a string of text on your UI.
 }
 \usage{
-tcLabel(parent, position, name, text, color, background, size, weight, family, binding)
+tcLabel(parent, position, name, text, fg, background, size, weight, family, binding)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +26,7 @@ The name of your widget as a string.
 \item{text}{
 A string of text to be displayed.
 }
-\item{color}{
+\item{fg}{
 (optional) A string specifying text color.
 }
 \item{background}{
