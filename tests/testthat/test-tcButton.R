@@ -9,6 +9,8 @@ widget_list<-list()
 widget_list[[1]]<-tcButton("app",
                            tcGrid(1,1,padx=30),
                            "button",
+                           background="red",
+                           color="white",
                            text="Click me!",
                            command="say_hi")
 

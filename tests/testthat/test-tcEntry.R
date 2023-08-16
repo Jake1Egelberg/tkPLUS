@@ -7,6 +7,7 @@ tcTheme()
     tcDestroy(paste("label",x,sep=""))
   })
   tryCatch(tcDestroy("resetbutton"),error=function(e){NULL})
+
 }
 
 # Define function when enter is pressed
@@ -61,7 +62,7 @@ widget_list[[1]]<-frame
 widget_list[[2]]<-label
 widget_list[[3]]<-entry
 
-test_that("tst tcEntry",{
+test_that("test tcEntry",{
   expect_no_error(
     tcBuild("app",widget_list,"+500+100",self_destruct = TRUE)
   )

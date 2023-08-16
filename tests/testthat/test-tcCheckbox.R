@@ -30,7 +30,7 @@ widget_list[[2]]<-tcCheckbox("frame",
                              value=FALSE,
                              binding=tcBind("<Button>","get_check"))
 
-test_that("test tcCheck",{
+test_that("test tcCheckbox",{
   expect_no_error(
     tcBuild("app",
             widget_list,

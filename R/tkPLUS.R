@@ -354,9 +354,7 @@ tcModify<-function(widget_name,
   if(widget_list[[widget_ind]]$Class=="Listbox"&&names(new_argument)=="values"){
 
     #if you are changing the values of the listbox
-    if(names(new_argument)=="values"){
-      widget_list[[widget_ind]]$Convert$VALUES<-new_argument[[1]]
-    }
+    widget_list[[widget_ind]]$Convert$VALUES<-new_argument[[1]]
 
   } else if(widget_list[[widget_ind]]$Class=="Combobox"&&names(new_argument)%in%c("values","selected")){
 
@@ -374,7 +372,15 @@ tcModify<-function(widget_name,
     #Replace the old value with the new value (by position not string match)
     str_sub(widget_list[[widget_ind]]$Widget,start=old_value_position[[1]],end=old_value_position[[2]])<-new_argument[[1]]
 
-  } else{
+  } else if(widget_list[[widget_ind]]$Class=="Entry"&&names(new_argument)=="text"){
+
+    widget_list[[widget_ind]]$Convert$TEXT<-new_argument[[1]]
+
+  } else if(widget_list[[widget_ind]]$Class=="Checkbutton"&&names(new_argument)=="value"){
+
+    widget_list[[widget_ind]]$Convert$VALUE<-new_argument[[1]]
+
+  }else{
 
     # Get the value to be replaced
     raw_old_value<-str_sub(widget_list[[widget_ind]]$Widget,start=old_value_position[[1]],end=old_value_position[[2]])
@@ -695,6 +701,8 @@ tcButton<-function(parent,
                      ",text='",text,"'",
                      ",fg='",color,"'",
                      ",background='",background,"'",
+                     ",activebackground='",background,"'",
+                     ",activeforeground='",color,"'",
                      ",font=tkfont.create(size=",size,",family='",family,"',weight='",weight,"')",
                      ",command=",command,
                      ")",sep="")
