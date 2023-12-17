@@ -31,6 +31,11 @@ tcTheme("DEFAULT")
            family="Comic Sans MS",
            binding=tcBind("<Enter>","bind_fun"))
 
+  #Modify border
+  tcModify(widget_name="frame1",
+           widget_list=widget_list,
+           border=tcBorder(2,"green"))
+
   #Modify combo
   tcModify("combo1",
            widget_list,
@@ -111,7 +116,7 @@ tcTheme("DEFAULT")
 # Create widgets
 frame<-tcFrame("app",
                tcGrid(1,1,padx=20,pady=10),
-               "frame1")
+               "frame1",border=tcBorder(2,"red"))
 label<-tcLabel("frame1",
                tcGrid(1,1),
                "label1",
@@ -161,6 +166,8 @@ widget_list[[6]]<-entry
 widget_list[[7]]<-check
 widget_list[[8]]<-button2
 widget_list[[9]]<-tkplot
+
+#tcBuild("app",widget_list,"600x300",self_destruct = FALSE)
 
 test_that("test tcmodify",
           {

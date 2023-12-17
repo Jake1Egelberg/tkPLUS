@@ -437,6 +437,20 @@ tcModify<-function(widget_name,
     } else if(names(new_argument)=="position"){
 
       widget_list[[widget_ind]]$Position<-new_argument[[1]]
+    } else if(names(new_argument)=="border"){
+
+      # Replace width value
+      width_ind <- str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=","highlightthickness","=)(.*?)(?=,|\\))",sep=""))[[1]]
+      str_sub(widget_list[[widget_ind]]$Widget,start=width_ind[[1]],end=width_ind[[2]]) <-new_argument[[1]][[1]]
+
+      # Replace color value
+      color_ind <- str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=","highlightcolor","=)(.*?)(?=,|\\))",sep=""))[[1]]
+      str_sub(widget_list[[widget_ind]]$Widget,start=color_ind[[1]],end=color_ind[[2]]) <-paste("'",new_argument[[1]][[2]],"'",sep="")
+
+      # Replace background value
+      background_ind <- str_locate_all(widget_list[[widget_ind]]$Widget,paste("(?<=","highlightbackground","=)(.*?)(?=,|\\))",sep=""))[[1]]
+      str_sub(widget_list[[widget_ind]]$Widget,start=background_ind[[1]],end=background_ind[[2]]) <-paste("'",new_argument[[1]][[2]],"'",sep="")
+
 
     } else{
 
